@@ -1,0 +1,1 @@
+ALTER TABLE "Agenda" ADD COLUMN "date" TIMESTAMP(3);

@@ -1,22 +1,24 @@
 'use client';
 
 import { useRef, useState, type FormEvent } from 'react';
-import AgendaManager from '@/components/AgendaManager';
 
-type Agenda = { id: string; sectionId: string; title: string; slug: string; description: string; link: string | null };
-type Item = { slug: string; link: string; description: string; wallpaperUrl?: string | null; password?: string; name?: string; agendas?: Agenda[] };
+type Agenda = { id: string; sectionId: string; title: string; slug: string; description: string; link: string | null; date: string | null };
+type Item = { slug: string; link: string; description: string; wallpaperUrl?: string | null; password?: string; name?: string; agendas?: Agenda[]; newAgenda?: { title: string; slug: string; description: string; link: string; date: string } };
 type User = { id: string; username: string; name: string };
 const inputClass = 'mt-1 w-full rounded-lg border border-black px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30';
 
 export default function Editor({ sections, users: initialUsers }: { sections: Item[]; users: User[] }) {
-  const [items, setItems] = useState(sections);
+  const [items, setItems] = useState(sections.map(section => ({ ...section, agendas: section.agendas?.map(agenda => ({ ...agenda, date: agenda.date ? agenda.date.slice(0, 10) : null })) })));
   const [users, setUsers] = useState(initialUsers);
   const [msg, setMsg] = useState('');
   const [showPanitiaPassword, setShowPanitiaPassword] = useState(false);
   const [showNewUserPassword, setShowNewUserPassword] = useState(false);
+  const [passwordEdits, setPasswordEdits] = useState<Record<string, string>>({});
+  const [showPasswordEdits, setShowPasswordEdits] = useState<Record<string, boolean>>({});
+  const [showPasswordEditValues, setShowPasswordEditValues] = useState<Record<string, boolean>>({});
   const [newUser, setNewUser] = useState({ username: '', name: '', password: '' });
   const notificationTimer = useRef<number | undefined>(undefined);
-  const change = (i: number, key: string, value: string) => setItems(items.map((item, index) => index === i ? { ...item, [key]: value } : item));
+  const change = (i: number, key: string, value: string) => setItems(previous => previous.map((item, index) => index === i ? { ...item, [key]: value } : item));
   const notify = (message: string) => {
     setMsg(message);
     if (notificationTimer.current) window.clearTimeout(notificationTimer.current);
@@ -37,6 +39,28 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
     notify(response.ok ? 'Perubahan tersimpan.' : 'Gagal menyimpan perubahan.');
   }
 
+  async function createAgenda(index: number, event: FormEvent) {
+    event.preventDefault();
+    const section = items[index], form = section.newAgenda;
+    if (!form) return;
+    const response = await fetch('/api/agendas', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, sectionSlug: section.slug, link: form.link || null, date: form.date || null }) });
+    const data = await response.json();
+    if (!response.ok) { notify(data.error || 'Gagal menambah agenda.'); return; }
+    setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: [...(item.agendas || []), data], newAgenda: { title: '', slug: '', description: '', link: '', date: '' } } : item));
+    notify('Agenda dibuat.');
+  }
+
+  async function updateAgenda(sectionIndex: number, agenda: Agenda) {
+    const response = await fetch('/api/agendas/' + agenda.id, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ title: agenda.title, slug: agenda.slug, description: agenda.description, link: agenda.link || null, date: agenda.date || null }) });
+    notify(response.ok ? 'Agenda diperbarui.' : 'Gagal memperbarui agenda.');
+  }
+
+  async function removeAgenda(sectionIndex: number, id: string) {
+    if (!window.confirm('Hapus agenda ini?')) return;
+    const response = await fetch('/api/agendas/' + id, { method: 'DELETE' });
+    if (response.ok) { setItems(previous => previous.map((item, i) => i === sectionIndex ? { ...item, agendas: (item.agendas || []).filter(agenda => agenda.id !== id) } : item)); notify('Agenda dihapus.'); }
+  }
+
   async function createUser(event: FormEvent) {
     event.preventDefault();
     const response = await fetch('/api/pdd/users', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(newUser) });
@@ -53,9 +77,13 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
   }
 
   async function changePassword(id: string) {
-    const password = window.prompt('Password baru (minimal 6 karakter):');
-    if (!password) return;
+    const password = passwordEdits[id] || '';
+    if (password.length < 6) { notify('Password minimal 6 karakter.'); return; }
     const response = await fetch('/api/pdd/users/' + id + '/password', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password }) });
+    if (response.ok) {
+      setPasswordEdits(previous => ({ ...previous, [id]: '' }));
+      setShowPasswordEdits(previous => ({ ...previous, [id]: false }));
+    }
     notify(response.ok ? 'Password diperbarui.' : 'Gagal memperbarui password.');
   }
 
@@ -66,9 +94,7 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
     else notify('Gagal menghapus pengguna.');
   }
 
-  const agendaSections = items.map(section => ({ slug: section.slug, name: section.name || section.slug, agendas: section.agendas || [] }));
   return <div className="space-y-8">
-    <AgendaManager sections={agendaSections} />
     <section>
       <h2 className="mb-5 text-2xl font-medium text-black">Pengaturan</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -79,6 +105,24 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
           <label className="mb-4 block text-sm text-black">Wallpaper<input type="file" accept="image/png,image/jpeg,image/webp" className={inputClass} onChange={event => event.target.files?.[0] && upload(index, event.target.files[0])} /></label>
           {section.wallpaperUrl && <img src={section.wallpaperUrl} alt="Pratinjau wallpaper" className="mb-4 h-24 w-full rounded-lg object-cover" />}
           {section.slug === 'panitia' && <label className="mb-5 block text-sm text-black">Password baru<div className="relative"><input type={showPanitiaPassword ? 'text' : 'password'} minLength={6} className={inputClass + ' pr-20'} value={section.password || ''} onChange={event => change(index, 'password', event.target.value)} placeholder="Kosongkan jika tidak diubah" /><button type="button" onClick={() => setShowPanitiaPassword(!showPanitiaPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-sm text-slate-600">{showPanitiaPassword ? 'Sembunyikan' : 'Lihat'}</button></div></label>}
+          <div className="mb-5 border-t border-black/20 pt-5"><h4 className="mb-3 text-sm font-medium">Agenda</h4>
+            <form onSubmit={event => createAgenda(index, event)} className="grid gap-2">
+              <input className={inputClass} placeholder="Judul agenda" required value={section.newAgenda?.title || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), title: event.target.value } as any)} />
+              <input className={inputClass} placeholder="Slug (opsional)" value={section.newAgenda?.slug || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), slug: event.target.value } as any)} />
+              <input className={inputClass} type="date" value={section.newAgenda?.date || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), date: event.target.value } as any)} />
+              <textarea className={inputClass} placeholder="Deskripsi agenda" value={section.newAgenda?.description || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), description: event.target.value } as any)} />
+              <input className={inputClass} type="url" placeholder="Link QR (opsional)" value={section.newAgenda?.link || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), link: event.target.value } as any)} />
+              <button className="rounded-lg bg-green-500 px-4 py-2 text-sm text-white">Tambah agenda</button>
+            </form>
+            <div className="mt-4 space-y-3">{(section.agendas || []).map(agenda => <div key={agenda.id} className="rounded-lg border border-black/20 p-3">
+              <input className={inputClass} value={agenda.title} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, title: event.target.value } : a) } : item))} />
+              <input className={inputClass} value={agenda.slug} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, slug: event.target.value } : a) } : item))} />
+              <input className={inputClass} type="date" value={agenda.date ? agenda.date.slice(0, 10) : ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, date: event.target.value || null } : a) } : item))} />
+              <textarea className={inputClass} value={agenda.description} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, description: event.target.value } : a) } : item))} />
+              <input className={inputClass} type="url" placeholder="Link QR (opsional)" value={agenda.link || ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, link: event.target.value || null } : a) } : item))} />
+              <div className="mt-2 flex gap-3 text-sm"><button type="button" onClick={() => updateAgenda(index, agenda)} className="text-sky-700">Simpan agenda</button><button type="button" onClick={() => removeAgenda(index, agenda.id)} className="text-red-600">Hapus</button></div>
+            </div>)}</div>
+          </div>
           <button onClick={() => saveSection(section)} className={`rounded-lg px-5 py-2 text-sm font-medium text-white ${section.slug === 'panitia' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-500 hover:bg-green-600'}`}>Simpan</button>
         </div>)}
       </div>
@@ -99,7 +143,7 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => updateUser(user)} className="rounded-lg bg-blue-500 px-5 py-2 text-sm font-medium text-white hover:bg-blue-600">Simpan</button>
-          <button onClick={() => changePassword(user.id)} className="rounded-lg border border-black bg-white px-4 py-2 text-sm text-black hover:bg-gray-50">Password</button>
+          {showPasswordEdits[user.id] ? <div className="flex items-center gap-2"><div className="relative"><input className={inputClass + ' w-44 pr-16'} type={showPasswordEditValues[user.id] ? 'text' : 'password'} minLength={6} placeholder="Password baru" value={passwordEdits[user.id] || ''} onChange={event => setPasswordEdits(previous => ({ ...previous, [user.id]: event.target.value }))} aria-label={`Password baru ${user.username}`} /><button type="button" onClick={() => setShowPasswordEditValues(previous => ({ ...previous, [user.id]: !previous[user.id] }))} className="absolute right-1 top-1/2 -translate-y-1/2 px-1 text-xs text-slate-600">{showPasswordEditValues[user.id] ? 'Sembunyi' : 'Lihat'}</button></div><button onClick={() => changePassword(user.id)} className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600">Simpan</button><button type="button" onClick={() => setShowPasswordEdits(previous => ({ ...previous, [user.id]: false }))} className="rounded-lg border border-black bg-white px-4 py-2 text-sm text-black hover:bg-gray-50">Batal</button></div> : <button onClick={() => setShowPasswordEdits(previous => ({ ...previous, [user.id]: true }))} className="rounded-lg border border-black bg-white px-4 py-2 text-sm text-black hover:bg-gray-50">Password</button>}
           <button onClick={() => removeUser(user.id)} className="rounded-lg border border-black bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-black hover:text-white">Hapus</button>
         </div>
       </div>)}</div>

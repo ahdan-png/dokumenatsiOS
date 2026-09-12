@@ -28,6 +28,7 @@ model Agenda {
   slug        String
   description String   @default("")
   link        String?
+  date        DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   @@unique([sectionId, slug])
