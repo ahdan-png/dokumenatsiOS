@@ -3,7 +3,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 
 type Agenda = { id: string; sectionId: string; title: string; slug: string; description: string; link: string | null; date: string | null };
-type Item = { slug: string; link: string; description: string; wallpaperUrl?: string | null; password?: string; name?: string; agendas?: Agenda[]; newAgenda?: { title: string; slug: string; description: string; link: string; date: string } };
+type Item = { slug: string; link: string; description: string; wallpaperUrl?: string | null; password?: string; name?: string; agendas?: Agenda[]; newAgenda?: { title: string; description: string; link: string; date: string } };
 type User = { id: string; username: string; name: string };
 const inputClass = 'mt-1 w-full rounded-lg border border-black px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30';
 
@@ -43,10 +43,10 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
     event.preventDefault();
     const section = items[index], form = section.newAgenda;
     if (!form) return;
-    const response = await fetch('/api/agendas', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, sectionSlug: section.slug, link: form.link || null, date: form.date || null }) });
+    const response = await fetch('/api/agendas', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sectionSlug: section.slug, title: form.title, description: form.description, link: form.link || null, date: form.date || null }) });
     const data = await response.json();
     if (!response.ok) { notify(data.error || 'Gagal menambah agenda.'); return; }
-    setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: [...(item.agendas || []), data], newAgenda: { title: '', slug: '', description: '', link: '', date: '' } } : item));
+    setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: [...(item.agendas || []), data], newAgenda: { title: '', description: '', link: '', date: '' } } : item));
     notify('Agenda dibuat.');
   }
 
@@ -100,26 +100,22 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {items.map((section, index) => <div key={section.slug} className={`rounded-xl border border-black bg-white p-6 ${section.slug === 'panitia' ? 'border-l-4 border-l-blue-500' : 'border-l-4 border-l-green-500'}`}>
           <h3 className={`mb-5 text-lg font-medium ${section.slug === 'panitia' ? 'text-blue-500' : 'text-green-600'}`}>{section.slug === 'panitia' ? 'Kelola Panitia' : 'Umum'}</h3>
-          <label className="mb-4 block text-sm text-black">Link<input type="url" className={inputClass} value={section.link} onChange={event => change(index, 'link', event.target.value)} /></label>
-          <label className="mb-4 block text-sm text-black">Deskripsi<textarea className={inputClass} rows={4} value={section.description} onChange={event => change(index, 'description', event.target.value)} /></label>
           <label className="mb-4 block text-sm text-black">Wallpaper<input type="file" accept="image/png,image/jpeg,image/webp" className={inputClass} onChange={event => event.target.files?.[0] && upload(index, event.target.files[0])} /></label>
           {section.wallpaperUrl && <img src={section.wallpaperUrl} alt="Pratinjau wallpaper" className="mb-4 h-24 w-full rounded-lg object-cover" />}
           {section.slug === 'panitia' && <label className="mb-5 block text-sm text-black">Password baru<div className="relative"><input type={showPanitiaPassword ? 'text' : 'password'} minLength={6} className={inputClass + ' pr-20'} value={section.password || ''} onChange={event => change(index, 'password', event.target.value)} placeholder="Kosongkan jika tidak diubah" /><button type="button" onClick={() => setShowPanitiaPassword(!showPanitiaPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-sm text-slate-600">{showPanitiaPassword ? 'Sembunyikan' : 'Lihat'}</button></div></label>}
           <div className="mb-5 border-t border-black/20 pt-5"><h4 className="mb-3 text-sm font-medium">Agenda</h4>
             <form onSubmit={event => createAgenda(index, event)} className="grid gap-2">
-              <input className={inputClass} placeholder="Judul agenda" required value={section.newAgenda?.title || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), title: event.target.value } as any)} />
-              <input className={inputClass} placeholder="Slug (opsional)" value={section.newAgenda?.slug || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), slug: event.target.value } as any)} />
+              <input className={inputClass} placeholder="Agenda" required value={section.newAgenda?.title || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), title: event.target.value } as any)} />
               <input className={inputClass} type="date" value={section.newAgenda?.date || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), date: event.target.value } as any)} />
               <textarea className={inputClass} placeholder="Deskripsi agenda" value={section.newAgenda?.description || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), description: event.target.value } as any)} />
-              <input className={inputClass} type="url" placeholder="Link QR (opsional)" value={section.newAgenda?.link || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), link: event.target.value } as any)} />
+              <input className={inputClass} type="url" placeholder="Link" value={section.newAgenda?.link || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), link: event.target.value } as any)} />
               <button className="rounded-lg bg-green-500 px-4 py-2 text-sm text-white">Tambah agenda</button>
             </form>
             <div className="mt-4 space-y-3">{(section.agendas || []).map(agenda => <div key={agenda.id} className="rounded-lg border border-black/20 p-3">
-              <input className={inputClass} value={agenda.title} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, title: event.target.value } : a) } : item))} />
-              <input className={inputClass} value={agenda.slug} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, slug: event.target.value } : a) } : item))} />
+              <input className={inputClass} placeholder="Agenda" value={agenda.title} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, title: event.target.value } : a) } : item))} />
               <input className={inputClass} type="date" value={agenda.date ? agenda.date.slice(0, 10) : ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, date: event.target.value || null } : a) } : item))} />
               <textarea className={inputClass} value={agenda.description} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, description: event.target.value } : a) } : item))} />
-              <input className={inputClass} type="url" placeholder="Link QR (opsional)" value={agenda.link || ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, link: event.target.value || null } : a) } : item))} />
+              <input className={inputClass} type="url" placeholder="Link" value={agenda.link || ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, link: event.target.value || null } : a) } : item))} />
               <div className="mt-2 flex gap-3 text-sm"><button type="button" onClick={() => updateAgenda(index, agenda)} className="text-sky-700">Simpan agenda</button><button type="button" onClick={() => removeAgenda(index, agenda.id)} className="text-red-600">Hapus</button></div>
             </div>)}</div>
           </div>
