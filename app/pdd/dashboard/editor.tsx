@@ -85,7 +85,7 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
         <input className={inputClass} placeholder="Username" value={newUser.username} onChange={event => setNewUser({ ...newUser, username: event.target.value })} required />
         <input className={inputClass} placeholder="Nama" value={newUser.name} onChange={event => setNewUser({ ...newUser, name: event.target.value })} required />
         <div className="relative"><input className={inputClass + ' pr-20'} type={showNewUserPassword ? 'text' : 'password'} placeholder="Password" minLength={6} value={newUser.password} onChange={event => setNewUser({ ...newUser, password: event.target.value })} required /><button type="button" onClick={() => setShowNewUserPassword(!showNewUserPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-sm text-slate-600">{showNewUserPassword ? 'Sembunyikan' : 'Lihat'}</button></div>
-        <button className="rounded-lg bg-green-500 px-5 py-2 text-sm font-medium text-white hover:bg-green-600">Tambah pengguna</button>
+        <button className="rounded-lg bg-green-500 px-5 py-2 text-sm font-medium text-white hover:bg-green-600">Tambah tim</button>
       </form>
       <div>{users.map(user => <div key={user.id} className="flex flex-wrap items-center gap-3 border-b border-black/20 py-3 last:border-0">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500 text-sm font-medium text-white">{user.name.charAt(0).toUpperCase()}</span>
