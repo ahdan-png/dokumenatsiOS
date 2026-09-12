@@ -30,9 +30,11 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
   async function upload(i: number, file: File) {
     const form = new FormData();
     form.append('wallpaper', file);
+    form.append('sectionSlug', items[i].slug);
     const response = await fetch('/api/upload-wallpaper', { method: 'POST', body: form });
-    if (!response.ok) { notify('Upload wallpaper gagal.'); return; }
-    change(i, 'wallpaperUrl', (await response.json()).wallpaperUrl);
+    const data = await response.json();
+    if (!response.ok) { notify(data.error || 'Upload wallpaper gagal.'); return; }
+    change(i, 'wallpaperUrl', data.wallpaperUrl);
     notify('Wallpaper berhasil diunggah.');
   }
 
@@ -66,6 +68,7 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
     if (!window.confirm('Hapus agenda ini?')) return;
     const response = await fetch('/api/agendas/' + id, { method: 'DELETE' });
     if (response.ok) { setItems(previous => previous.map((item, i) => i === sectionIndex ? { ...item, agendas: (item.agendas || []).filter(agenda => agenda.id !== id) } : item)); notify('Agenda dihapus.'); }
+    else { const data = await response.json().catch(() => null); notify(data?.error || 'Gagal menghapus agenda.'); }
   }
 
   async function createUser(event: FormEvent) {
