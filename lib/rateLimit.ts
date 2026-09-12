@@ -1,0 +1,1 @@
+const attempts=new Map<string,{count:number;until:number}>(); export function allowed(key:string){const now=Date.now(),old=attempts.get(key);if(!old||old.until<now){attempts.set(key,{count:1,until:now+60000});return true}if(old.count>=10)return false;old.count++;return true}

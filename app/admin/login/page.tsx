@@ -1,0 +1,8 @@
+import LoginForm from '@/components/LoginForm';
+
+export default function AdminLogin(){
+  return <main className="min-h-[calc(100vh-73px)] bg-slate-100 px-5 py-20">
+    <h1 className="mb-8 text-center text-3xl font-bold">Masuk Admin</h1>
+    <LoginForm role="admin"/>
+  </main>
+}

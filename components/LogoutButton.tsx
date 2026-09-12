@@ -1,0 +1,1 @@
+'use client';export default function LogoutButton(){return <button onClick={async()=>{await fetch('/api/logout',{method:'POST'});location.href='/'}} className="rounded-lg border border-black bg-white px-4 py-2 text-sm text-black hover:bg-gray-50">Keluar</button>}

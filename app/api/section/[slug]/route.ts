@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';export async function GET(_:Request,{params}:{params:{slug:string}}){const section=await db.section.findUnique({where:{slug:params.slug},select:{slug:true,link:true,description:true,wallpaperUrl:true}});return section?NextResponse.json(section):NextResponse.json({error:'Section tidak ditemukan'},{status:404})}
