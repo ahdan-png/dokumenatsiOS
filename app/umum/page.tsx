@@ -1,1 +1,1 @@
-import SectionCard from '@/components/SectionCard';export default function Umum(){return <SectionCard slug="umum"/>}
+import {db} from '@/lib/db';import AgendaGrid from '@/components/AgendaGrid';export const dynamic='force-dynamic';export default async function Umum(){const s=await db.section.findUnique({where:{slug:'umum'},include:{agendas:true}});return <AgendaGrid section="umum" agendas={s?.agendas||[]}/>}

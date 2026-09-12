@@ -1,8 +1,10 @@
 'use client';
 
 import { useRef, useState, type FormEvent } from 'react';
+import AgendaManager from '@/components/AgendaManager';
 
-type Item = { slug: string; link: string; description: string; wallpaperUrl?: string | null; password?: string };
+type Agenda = { id: string; sectionId: string; title: string; slug: string; description: string; link: string | null };
+type Item = { slug: string; link: string; description: string; wallpaperUrl?: string | null; password?: string; name?: string; agendas?: Agenda[] };
 type User = { id: string; username: string; name: string };
 const inputClass = 'mt-1 w-full rounded-lg border border-black px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30';
 
@@ -64,7 +66,9 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
     else notify('Gagal menghapus pengguna.');
   }
 
+  const agendaSections = items.map(section => ({ slug: section.slug, name: section.name || section.slug, agendas: section.agendas || [] }));
   return <div className="space-y-8">
+    <AgendaManager sections={agendaSections} />
     <section>
       <h2 className="mb-5 text-2xl font-medium text-black">Pengaturan</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

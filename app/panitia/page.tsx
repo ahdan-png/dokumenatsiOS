@@ -1,1 +1,1 @@
-import SectionCard from '@/components/SectionCard';export default function Panitia(){return <SectionCard slug="panitia"/>}
+import {db} from '@/lib/db';import AgendaGrid from '@/components/AgendaGrid';export const dynamic='force-dynamic';export default async function Panitia(){const s=await db.section.findUnique({where:{slug:'panitia'},include:{agendas:true}});return <AgendaGrid section="panitia" agendas={s?.agendas||[]}/>}

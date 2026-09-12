@@ -1,0 +1,1 @@
+import {db} from '@/lib/db';import AgendaGrid from '@/components/AgendaGrid';export const dynamic='force-dynamic';export default async function Documentation(){const s=await db.section.findUnique({where:{slug:'pdd-dokumentasi'},include:{agendas:true}});return <AgendaGrid section="pdd-dokumentasi" hrefBase="/pdd/dokumentasi" agendas={s?.agendas||[]}/>}
