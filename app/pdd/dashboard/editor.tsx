@@ -16,6 +16,8 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
   const [passwordEdits, setPasswordEdits] = useState<Record<string, string>>({});
   const [showPasswordEdits, setShowPasswordEdits] = useState<Record<string, boolean>>({});
   const [showPasswordEditValues, setShowPasswordEditValues] = useState<Record<string, boolean>>({});
+  const [creatingAgenda, setCreatingAgenda] = useState<Record<number, boolean>>({});
+  const [editingAgenda, setEditingAgenda] = useState<string | null>(null);
   const [newUser, setNewUser] = useState({ username: '', name: '', password: '' });
   const notificationTimer = useRef<number | undefined>(undefined);
   const change = (i: number, key: string, value: string) => setItems(previous => previous.map((item, index) => index === i ? { ...item, [key]: value } : item));
@@ -42,12 +44,17 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
   async function createAgenda(index: number, event: FormEvent) {
     event.preventDefault();
     const section = items[index], form = section.newAgenda;
-    if (!form) return;
-    const response = await fetch('/api/agendas', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sectionSlug: section.slug, title: form.title, description: form.description, link: form.link || null, date: form.date || null }) });
-    const data = await response.json();
-    if (!response.ok) { notify(data.error || 'Gagal menambah agenda.'); return; }
-    setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: [...(item.agendas || []), data], newAgenda: { title: '', description: '', link: '', date: '' } } : item));
-    notify('Agenda dibuat.');
+    if (!form || creatingAgenda[index]) return;
+    setCreatingAgenda(previous => ({ ...previous, [index]: true }));
+    try {
+      const response = await fetch('/api/agendas', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sectionSlug: section.slug, title: form.title, description: form.description, link: form.link || null, date: form.date || null }) });
+      const data = await response.json();
+      if (!response.ok) { notify(data.error || 'Gagal menambah agenda.'); return; }
+      setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: [...(item.agendas || []), data], newAgenda: { title: '', description: '', link: '', date: '' } } : item));
+      notify('Agenda dibuat.');
+    } finally {
+      setCreatingAgenda(previous => ({ ...previous, [index]: false }));
+    }
   }
 
   async function updateAgenda(sectionIndex: number, agenda: Agenda) {
@@ -109,14 +116,16 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
               <input className={inputClass} type="date" value={section.newAgenda?.date || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), date: event.target.value } as any)} />
               <textarea className={inputClass} placeholder="Deskripsi agenda" value={section.newAgenda?.description || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), description: event.target.value } as any)} />
               <input className={inputClass} type="url" placeholder="Link" value={section.newAgenda?.link || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), link: event.target.value } as any)} />
-              <button className="rounded-lg bg-green-500 px-4 py-2 text-sm text-white">Tambah agenda</button>
+              <button disabled={creatingAgenda[index]} className="rounded-lg bg-green-500 px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-60">{creatingAgenda[index] ? 'Menyimpan...' : 'Tambah agenda'}</button>
             </form>
             <div className="mt-4 space-y-3">{(section.agendas || []).map(agenda => <div key={agenda.id} className="rounded-lg border border-black/20 p-3">
-              <input className={inputClass} placeholder="Agenda" value={agenda.title} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, title: event.target.value } : a) } : item))} />
-              <input className={inputClass} type="date" value={agenda.date ? agenda.date.slice(0, 10) : ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, date: event.target.value || null } : a) } : item))} />
-              <textarea className={inputClass} value={agenda.description} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, description: event.target.value } : a) } : item))} />
-              <input className={inputClass} type="url" placeholder="Link" value={agenda.link || ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, link: event.target.value || null } : a) } : item))} />
-              <div className="mt-2 flex gap-3 text-sm"><button type="button" onClick={() => updateAgenda(index, agenda)} className="text-sky-700">Simpan agenda</button><button type="button" onClick={() => removeAgenda(index, agenda.id)} className="text-red-600">Hapus</button></div>
+              {editingAgenda === agenda.id ? <>
+                <input className={inputClass} placeholder="Agenda" value={agenda.title} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, title: event.target.value } : a) } : item))} />
+                <input className={inputClass} type="date" value={agenda.date ? agenda.date.slice(0, 10) : ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, date: event.target.value || null } : a) } : item))} />
+                <textarea className={inputClass} value={agenda.description} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, description: event.target.value } : a) } : item))} />
+                <input className={inputClass} type="url" placeholder="Link" value={agenda.link || ''} onChange={event => setItems(previous => previous.map((item, i) => i === index ? { ...item, agendas: (item.agendas || []).map(a => a.id === agenda.id ? { ...a, link: event.target.value || null } : a) } : item))} />
+                <div className="mt-2 flex gap-3 text-sm"><button type="button" onClick={async () => { await updateAgenda(index, agenda); setEditingAgenda(null); }} className="text-sky-700">Simpan agenda</button><button type="button" onClick={() => setEditingAgenda(null)} className="text-slate-600">Batal</button><button type="button" onClick={() => removeAgenda(index, agenda.id)} className="text-red-600">Hapus</button></div>
+              </> : <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-medium text-black">{agenda.title}</p><p className="text-sm text-slate-500">{agenda.date ? agenda.date.slice(0, 10) : 'Tanggal belum diatur'}</p></div><div className="flex gap-3 text-sm"><button type="button" onClick={() => setEditingAgenda(agenda.id)} className="text-sky-700">Edit agenda</button><button type="button" onClick={() => removeAgenda(index, agenda.id)} className="text-red-600">Hapus</button></div></div>}
             </div>)}</div>
           </div>
           <button onClick={() => saveSection(section)} className={`rounded-lg px-5 py-2 text-sm font-medium text-white ${section.slug === 'panitia' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-500 hover:bg-green-600'}`}>Simpan</button>
