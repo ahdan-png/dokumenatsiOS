@@ -39,8 +39,10 @@ export default function Editor({ sections, users: initialUsers }: { sections: It
   }
 
   async function saveSection(section: Item) {
-    const response = await fetch('/api/pdd/section/' + section.slug, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(section) });
-    notify(response.ok ? 'Perubahan tersimpan.' : 'Gagal menyimpan perubahan.');
+    const sectionSettings = { link: section.link, description: section.description, password: section.password };
+    const response = await fetch('/api/pdd/section/' + section.slug, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(sectionSettings) });
+    const data = await response.json().catch(() => null);
+    notify(response.ok ? 'Perubahan tersimpan.' : data?.error || 'Gagal menyimpan perubahan.');
   }
 
   async function createAgenda(index: number, event: FormEvent) {
