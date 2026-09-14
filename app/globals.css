@@ -1,1 +1,1 @@
-@tailwind base;@tailwind components;@tailwind utilities;body{background:#f8fafc;color:#172033}.glass{background:rgba(255,255,255,.92);backdrop-filter:blur(12px)}h1{overflow-wrap:normal}
+@tailwind base;@tailwind components;@tailwind utilities;body{background:#f8fafc;color:#172033}.glass{background:rgba(255,255,255,.92);backdrop-filter:blur(12px)}h1{overflow-wrap:normal}button{transition:all .2s ease}
