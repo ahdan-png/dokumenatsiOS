@@ -6,8 +6,7 @@ export default function BackButton() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const isAgendaDetail = /^\/(umum|panitia)\/[^/]+$/.test(pathname) || /^\/pdd\/dokumentasi\/[^/]+$/.test(pathname);
-  if (pathname === '/' || isAgendaDetail) return null;
+  if (pathname === '/') return null;
 
   return <div className="mx-auto max-w-6xl px-5 pt-3">
     <button type="button" aria-label="Kembali" onClick={() => router.back()} className="rounded-full border border-blue-200 bg-white px-4 py-2 text-blue-700 shadow-sm">
