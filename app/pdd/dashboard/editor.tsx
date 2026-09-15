@@ -122,13 +122,13 @@ export default function Editor({ sections, users: initialUsers, sectionFilter }:
     <section>
       <h2 className="mb-5 text-2xl font-medium text-black">Pengaturan</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {items.map((section, index) => <div key={section.slug} className={`editor-card rounded-xl border border-black bg-white p-6 ${section.slug === 'panitia' ? 'border-l-4 border-l-blue-500' : 'border-l-4 border-l-green-500'}`}>
+        {items.map((section, index) => <div key={section.slug} className="editor-card rounded-xl border border-black bg-white p-6">
           <h3 className={`mb-5 text-lg font-medium ${section.slug === 'panitia' ? 'text-blue-500' : 'text-green-600'}`}>{section.slug === 'panitia' ? 'Kelola Panitia' : section.slug === 'pdd-dokumentasi' ? 'Tim PDD' : 'Umum'}</h3>
           <label className="mb-4 block text-sm text-black">Wallpaper<input type="file" accept="image/png,image/jpeg,image/webp" className={inputClass} onChange={event => event.target.files?.[0] && upload(index, event.target.files[0])} /></label>
           {section.wallpaperUrl && <img src={section.wallpaperUrl} alt="Pratinjau wallpaper" className="mb-4 h-24 w-full rounded-lg object-cover" />}
           {section.slug === 'panitia' && <label className="mb-5 block text-sm text-black">Password baru<div className="relative"><input type={showPanitiaPassword ? 'text' : 'password'} minLength={6} className={inputClass + ' pr-20'} value={section.password || ''} onChange={event => change(index, 'password', event.target.value)} placeholder="Kosongkan jika tidak diubah" /><button type="button" onClick={() => setShowPanitiaPassword(!showPanitiaPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-sm text-slate-600">{showPanitiaPassword ? 'Sembunyikan' : 'Lihat'}</button></div></label>}
           <div className="mb-5 space-y-4">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+            <div className={`rounded-xl border border-slate-200 border-l-4 p-4 shadow-sm ${section.slug === 'panitia' ? 'border-l-blue-500 bg-blue-50/40' : 'border-l-green-500 bg-green-50/40'}`}>
               <h5 className="mb-3 text-sm font-medium text-slate-700">Tambah Agenda</h5>
               <form onSubmit={event => createAgenda(index, event)} className="grid gap-2">
                 <input className={inputClass} placeholder="Agenda" required value={section.newAgenda?.title || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), title: event.target.value } as any)} />
@@ -138,7 +138,7 @@ export default function Editor({ sections, users: initialUsers, sectionFilter }:
                 <button disabled={creatingAgenda[index]} className="rounded-full bg-blue-600 px-4 py-2 text-sm text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">{creatingAgenda[index] ? 'Menyimpan...' : 'Tambah agenda'}</button>
               </form>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className={`rounded-xl border border-slate-200 border-l-4 p-4 shadow-sm ${section.slug === 'panitia' ? 'border-l-blue-500 bg-blue-50/20' : 'border-l-green-500 bg-green-50/20'}`}>
               <h5 className="mb-3 text-sm font-medium text-slate-700">Agenda yang Sudah Dibuat</h5>
               <div className="space-y-3">{(section.agendas || []).map(agenda => <div key={agenda.id} className={`editor-list-item rounded-lg border border-black/20 p-3 ${deletingAgenda === agenda.id ? 'is-deleting' : ''}`}>
               {editingAgenda === agenda.id ? <>
