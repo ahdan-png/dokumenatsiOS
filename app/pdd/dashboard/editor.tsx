@@ -82,7 +82,7 @@ export default function Editor({ sections, sectionFilter }: { sections: Item[]; 
     <section>
       <h2 className="mb-5 text-2xl font-medium text-black">Pengaturan</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {items.map((section, index) => <div key={section.slug} className="editor-card rounded-xl border border-black bg-white p-6">
+        {items.map((section, index) => <div key={section.slug} className="editor-card rounded-xl border border-black bg-slate-50 p-6">
           <h3 className={`mb-5 text-lg font-medium ${section.slug === 'panitia' ? 'text-blue-500' : 'text-green-600'}`}>{section.slug === 'panitia' ? 'Kelola Panitia' : section.slug === 'pdd-dokumentasi' ? 'Tim PDD' : 'Umum'}</h3>
           <label className="mb-4 block text-sm text-black">Wallpaper<input type="file" accept="image/png,image/jpeg,image/webp" className={inputClass} onChange={event => event.target.files?.[0] && upload(index, event.target.files[0])} /></label>
           {section.wallpaperUrl && <img src={section.wallpaperUrl} alt="Pratinjau wallpaper" className="mb-4 h-24 w-full rounded-lg object-cover" />}
