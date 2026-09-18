@@ -98,7 +98,7 @@ export default function Editor({ sections, sectionFilter }: { sections: Item[]; 
                 <button disabled={creatingAgenda[index]} className="rounded-full bg-blue-600 px-4 py-2 text-sm text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">{creatingAgenda[index] ? 'Menyimpan...' : 'Tambah agenda'}</button>
               </form>
             </div>
-            <div className={`rounded-xl border border-gray-200 border-l-4 bg-white p-6 ${section.slug === 'panitia' ? 'border-l-blue-500' : 'border-l-green-500'}`}>
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
               <h3 className="mb-3 font-medium">Agenda yang Sudah Dibuat</h3>
               <div className="space-y-3">{(section.agendas || []).map(agenda => <div key={agenda.id} className={`editor-list-item rounded-lg border border-black/20 p-3 ${deletingAgenda === agenda.id ? 'is-deleting' : ''}`}>
               {editingAgenda === agenda.id ? <>
