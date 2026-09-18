@@ -5,7 +5,7 @@ import BackButton from '@/components/BackButton';
 export const metadata = { title: 'Dokumentasi OSIM', description: 'Dokumentasi kegiatan OSIM' };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <html lang="id"><body>
+  return <html lang="id"><body className="flex min-h-dvh flex-col overflow-x-hidden">
     <header className="border-b bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
         <div className="flex flex-col text-sky-800" aria-label="Dokumentasi OSIM">

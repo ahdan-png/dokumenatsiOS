@@ -1,7 +1,7 @@
 import LoginForm from '@/components/LoginForm';
 
 export default function AdminLogin(){
-  return <main className="flex min-h-[calc(100vh-73px)] items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4 py-10 md:px-5 md:py-12">
+  return <main className="flex flex-1 items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4 py-10 md:px-5 md:py-12">
     <LoginForm role="admin"/>
   </main>
 }
