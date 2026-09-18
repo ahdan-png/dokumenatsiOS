@@ -22,7 +22,7 @@ export default function BackButton() {
   };
   const target = backTargets[pathname];
 
-  return <div className="mx-auto max-w-6xl px-5 pt-3">
+  return <div className="inline-block p-4">
     <button type="button" aria-label="Kembali" onClick={() => (target ? router.push(target) : router.back())} className="rounded-full border border-blue-200 bg-white px-4 py-2 text-blue-700 shadow-sm">
       <span aria-hidden="true" className="text-lg leading-none">←</span>
     </button>
