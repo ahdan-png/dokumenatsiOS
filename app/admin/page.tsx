@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export default function AdminLanding(){
-  return <main className="min-h-[calc(100vh-73px)] bg-gradient-to-br from-sky-900 to-teal-700 px-4 py-24 text-center text-white">
+  return <main className="min-h-[calc(100vh-73px)] bg-gradient-to-br from-sky-900 to-teal-700 px-4 py-16 text-center text-white md:py-24">
     <p className="font-semibold tracking-[.2em]">SELAMAT DATANG</p>
     <h1 className="mt-5 whitespace-nowrap text-[clamp(1.75rem,8vw,3rem)] font-bold">DOKUMENTASI OSIM</h1>
     <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-4">

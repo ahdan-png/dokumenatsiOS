@@ -17,7 +17,7 @@ export default function AgendaDetail({ section, slug }: { section: string; slug:
   return <main className="relative min-h-[calc(100vh-73px)] bg-cover bg-center" style={{ backgroundImage: `url(${data.wallpaperUrl || ''})` }}>
     <Link href={listPath} className="absolute left-4 top-4 inline-flex rounded-full border border-blue-200 bg-white px-4 py-2 text-sm text-blue-700 shadow-sm">← Semua agenda</Link>
     <div className="mx-auto max-w-3xl px-6 pb-12 pt-14 text-center">
-      <div className="glass rounded-3xl p-8 shadow-2xl">
+      <div className="glass rounded-3xl p-6 shadow-2xl md:p-8">
         <h1 className="text-4xl font-bold">{a.title}</h1>
         <p className="mx-auto mt-4 max-w-xl text-slate-600">{a.description}</p>
         {qr ? <img className="mx-auto mt-7 h-auto w-full max-w-[240px] rounded-xl" src={qr} alt="QR link" /> : <p className="mt-8 rounded-lg bg-slate-100 p-4 text-slate-500">QR dan link belum diatur.</p>}

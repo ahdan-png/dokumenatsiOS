@@ -8,7 +8,7 @@ const cards = [
 
 export default function DashboardMenu({ basePath }: { basePath: string }) {
   return <div className="grid gap-5 sm:grid-cols-3">
-    {cards.map(card => <Link key={card.slug} href={`${basePath}/${card.slug}`} className="dashboard-card glass rounded-2xl border border-slate-200 p-6">
+    {cards.map(card => <Link key={card.slug} href={`${basePath}/${card.slug}`} className="dashboard-card glass rounded-2xl border border-slate-200 p-5 md:p-6">
       <span className="text-sm font-semibold uppercase tracking-[.16em] text-sky-700">Kelola</span>
       <h2 className="mt-3 text-2xl font-semibold text-slate-900">{card.title}</h2>
       <p className="mt-2 text-sm text-slate-600">{card.description}</p>

@@ -78,20 +78,20 @@ export default function Editor({ sections, sectionFilter }: { sections: Item[]; 
     else { const data = await response.json().catch(() => null); notify(data?.error || 'Gagal menghapus agenda.', 'error'); }
   }
 
-  return <div className="space-y-8">
+  return <div className="space-y-6">
     <section>
-      <h2 className="mb-5 text-2xl font-medium text-black">Pengaturan</h2>
+      <h2 className="mb-4 text-2xl font-medium text-black">Pengaturan</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {items.map((section, index) => <div key={section.slug} className="flex flex-col gap-6">
-          <div className="editor-card rounded-xl border border-black bg-white p-6">
-          <h3 className={`mb-5 text-lg font-medium ${section.slug === 'panitia' ? 'text-blue-500' : 'text-green-600'}`}>{section.slug === 'panitia' ? 'Kelola Panitia' : section.slug === 'pdd-dokumentasi' ? 'Tim PDD' : 'Umum'}</h3>
+        {items.map((section, index) => <div key={section.slug} className="flex flex-col gap-4 md:gap-6">
+          <div className="editor-card rounded-xl border border-black bg-white p-4 md:p-6">
+          <h3 className={`mb-4 text-lg font-medium ${section.slug === 'panitia' ? 'text-blue-500' : 'text-green-600'}`}>{section.slug === 'panitia' ? 'Kelola Panitia' : section.slug === 'pdd-dokumentasi' ? 'Tim PDD' : 'Umum'}</h3>
           <label className="mb-4 block text-sm text-black">Wallpaper<input type="file" accept="image/png,image/jpeg,image/webp" className={inputClass} onChange={event => event.target.files?.[0] && upload(index, event.target.files[0])} /></label>
           {section.wallpaperUrl && <img src={section.wallpaperUrl} alt="Pratinjau wallpaper" className="mb-4 h-24 w-full rounded-lg object-cover" />}
           {section.slug === 'panitia' && <label className="mb-5 block text-sm text-black">Password baru<div className="relative"><input type={showPanitiaPassword ? 'text' : 'password'} minLength={6} className={inputClass + ' pr-20'} value={section.password || ''} onChange={event => change(index, 'password', event.target.value)} placeholder="Kosongkan jika tidak diubah" /><button type="button" onClick={() => setShowPanitiaPassword(!showPanitiaPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-sm text-slate-600">{showPanitiaPassword ? 'Sembunyikan' : 'Lihat'}</button></div></label>}
           <button onClick={() => saveSection(section)} className="rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700">Simpan</button>
           </div>
           <div className="flex flex-col gap-4">
-            <div className={`rounded-xl border border-gray-200 border-l-4 bg-white p-6 ${section.slug === 'panitia' ? 'border-l-blue-500' : 'border-l-green-500'}`}>
+            <div className={`rounded-xl border border-gray-200 border-l-4 bg-white p-4 md:p-6 ${section.slug === 'panitia' ? 'border-l-blue-500' : 'border-l-green-500'}`}>
               <h5 className="mb-3 text-sm font-medium text-slate-700">Tambah Agenda</h5>
               <form onSubmit={event => createAgenda(index, event)} className="grid gap-2">
                 <input className={inputClass} placeholder="Agenda" required value={section.newAgenda?.title || ''} onChange={event => change(index, 'newAgenda', { ...(section.newAgenda || {}), title: event.target.value } as any)} />
@@ -101,7 +101,7 @@ export default function Editor({ sections, sectionFilter }: { sections: Item[]; 
                 <button disabled={creatingAgenda[index]} className="rounded-full bg-blue-600 px-4 py-2 text-sm text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">{creatingAgenda[index] ? 'Menyimpan...' : 'Tambah agenda'}</button>
               </form>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-6">
               <h3 className="mb-3 font-medium">Agenda yang Sudah Dibuat</h3>
               <div className="space-y-3">{(section.agendas || []).map(agenda => <div key={agenda.id} className={`editor-list-item rounded-lg border border-black/20 p-3 ${deletingAgenda === agenda.id ? 'is-deleting' : ''}`}>
               {editingAgenda === agenda.id ? <>
