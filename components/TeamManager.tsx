@@ -66,7 +66,7 @@ export default function TeamManager({ users: initialUsers }: { users: User[] }) 
       <p className="mt-2 text-sm text-slate-600">Kelola anggota tim PDD.</p>
       <span className="mt-6 inline-block text-sm font-semibold text-sky-700">{open ? 'Tutup →' : 'Buka →'}</span>
     </button>
-    {open && <div className="sm:col-span-2 rounded-xl border border-black bg-white p-4 md:p-6">
+    {open && <div className="sm:col-span-2 rounded-xl border border-black bg-white p-6">
       <h2 className="mb-5 text-2xl font-medium text-black">Kelola Tim PDD</h2>
       <form onSubmit={createUser} className="mb-6 grid gap-3 md:grid-cols-4">
         <input className={inputClass} placeholder="Username" value={newUser.username} onChange={event => setNewUser({ ...newUser, username: event.target.value })} required />

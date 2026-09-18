@@ -20,7 +20,7 @@ export default function AgendaDetail({ section, slug }: { section: string; slug:
       <div className="glass rounded-3xl p-6 shadow-2xl md:p-8">
         <h1 className="text-4xl font-bold">{a.title}</h1>
         <p className="mx-auto mt-4 max-w-xl text-slate-600">{a.description}</p>
-        {qr ? <img className="mx-auto mt-7 h-auto w-full max-w-[240px] rounded-xl" src={qr} alt="QR link" /> : <p className="mt-8 rounded-lg bg-slate-100 p-4 text-slate-500">QR dan link belum diatur.</p>}
+        {qr ? <img className="mx-auto mt-6 h-auto w-40 rounded-xl md:w-44" src={qr} alt="QR link" /> : <p className="mt-8 rounded-lg bg-slate-100 p-4 text-slate-500">QR dan link belum diatur.</p>}
         {a.link && <a className="mt-7 inline-block rounded-full bg-sky-700 px-7 py-3 font-semibold text-white transition-all duration-150 ease-in-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300" href={a.link} target="_blank" rel="noreferrer">Buka tautan</a>}
       </div>
     </div>
