@@ -11,16 +11,16 @@ export default function SectionCard({ slug }: { slug: string }) {
   return <section className="flex-1 bg-cover bg-center px-6 pb-6 pt-3" style={{ backgroundImage: `url(${data.wallpaperUrl || ''})` }}>
     <div className="mx-auto max-w-3xl pt-10 text-center">
       <div className="rounded-3xl bg-white/60 p-8 shadow-2xl backdrop-blur-sm">
-        <div className="space-y-6">
-          <h1 className="text-4xl font-bold capitalize">{data.slug}</h1>
+        <div className="space-y-5">
+          <h1 className="text-2xl font-bold capitalize">{data.slug}</h1>
           {data.description && <p className="mx-auto max-w-xl text-slate-600">{data.description}</p>}
           {qr
             ? <div className="flex items-center justify-center">
-                <img className="h-auto w-[clamp(180px,50vw,260px)] rounded-xl" src={qr} alt="QR link" />
+                <img className="h-auto w-[clamp(140px,40vw,200px)] rounded-xl" src={qr} alt="QR link" />
               </div>
             : <p className="rounded-lg bg-slate-100 p-4 text-slate-500">QR dan link belum diatur oleh Tim PDD.</p>}
           {data.link && <div className="flex items-center justify-center">
-            <a className="inline-block rounded-full bg-sky-700 px-7 py-3 font-semibold text-white transition-all duration-150 ease-in-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300" href={data.link} target="_blank" rel="noreferrer">Buka tautan</a>
+            <a className="inline-block rounded-full bg-sky-700 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-in-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300" href={data.link} target="_blank" rel="noreferrer">Buka tautan</a>
           </div>}
         </div>
       </div>
