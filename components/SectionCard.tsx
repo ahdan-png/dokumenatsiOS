@@ -8,10 +8,9 @@ export default function SectionCard({ slug }: { slug: string }) {
   useEffect(() => { fetch('/api/section/' + slug).then(r => r.json()).then(setData) }, [slug]);
   useEffect(() => { setQr(''); if (data?.link) QRCode.toDataURL(data.link, { width: 260, margin: 2 }).then(setQr) }, [data]);
   if (!data) return <p className="text-center">Memuat...</p>;
-  return <section className="relative flex-1 bg-cover bg-center px-6 pb-6 pt-3" style={{ backgroundImage: `url(${data.wallpaperUrl || ''})` }}>
-    <div className="absolute inset-0 bg-white/40" aria-hidden="true" />
-    <div className="relative z-10 mx-auto max-w-3xl pt-10 text-center">
-      <div className="glass rounded-3xl p-8 shadow-2xl">
+  return <section className="flex-1 bg-cover bg-center px-6 pb-6 pt-3" style={{ backgroundImage: `url(${data.wallpaperUrl || ''})` }}>
+    <div className="mx-auto max-w-3xl pt-10 text-center">
+      <div className="rounded-3xl bg-white/60 p-8 shadow-2xl backdrop-blur-sm">
         <div className="space-y-6">
           <h1 className="text-4xl font-bold capitalize">{data.slug}</h1>
           {data.description && <p className="mx-auto max-w-xl text-slate-600">{data.description}</p>}
