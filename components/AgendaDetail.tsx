@@ -15,8 +15,9 @@ export default function AgendaDetail({ section, slug }: { section: string; slug:
   if (!a) return <p className="p-10 text-center">Agenda tidak ditemukan.</p>;
   const listPath = section === 'pdd-dokumentasi' ? '/pdd/dokumentasi' : `/${section}`;
   return <main className="relative flex-1 bg-cover bg-center" style={{ backgroundImage: `url(${data.wallpaperUrl || ''})` }}>
-    <Link href={listPath} className="absolute left-4 top-4 inline-flex rounded-full border border-blue-200 bg-white px-4 py-2 text-sm text-blue-700 shadow-sm">← Semua agenda</Link>
-    <div className="mx-auto max-w-3xl px-6 pb-12 pt-24 text-center md:pt-20">
+    <div className="absolute inset-0 bg-white/40" aria-hidden="true" />
+    <Link href={listPath} className="absolute left-4 top-4 z-10 inline-flex rounded-full border border-blue-200 bg-white px-4 py-2 text-sm text-blue-700 shadow-sm">← Semua agenda</Link>
+    <div className="relative z-10 mx-auto max-w-3xl px-6 pb-12 pt-24 text-center md:pt-20">
       <div className="glass rounded-3xl p-6 shadow-2xl md:p-8">
         <div className="space-y-6">
           <h1 className="text-4xl font-bold">{a.title}</h1>
