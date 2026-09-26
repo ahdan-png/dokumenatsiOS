@@ -1,4 +1,4 @@
-import MenuButton from '@/components/MenuButton';
+import MenuStack from '@/components/MenuStack';
 
 export default function Home() {
   return (
@@ -14,11 +14,7 @@ export default function Home() {
         <p className="font-semibold tracking-[.2em]">SELAMAT DATANG DI</p>
         <h1 className="mt-5 whitespace-nowrap text-[clamp(1.75rem,8vw,3rem)] font-bold">DOKUMENTASI OSIM</h1>
 
-        <div className="mx-auto mt-14 flex flex-wrap items-start justify-center gap-10 sm:gap-12">
-          <MenuButton label="Umum" href="/umum" glow="rgba(59,130,246,0.6)" />
-          <MenuButton label="Panitia" href="/panitia/login" glow="rgba(239,68,68,0.6)" />
-          <MenuButton label="PDD" href="/pdd/login" glow="rgba(245,158,11,0.6)" />
-        </div>
+        <MenuStack />
       </div>
     </main>
   );
