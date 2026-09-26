@@ -5,11 +5,15 @@ import Image from 'next/image';
 import BackButton from '@/components/BackButton';
 
 const LOGIN_ROUTES = /^\/(panitia|pdd|admin)\/login$/;
+const BACK_ON_LOGIN = /^\/(panitia|pdd)\/login$/;
 
 export default function UiShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || '';
 
-  if (LOGIN_ROUTES.test(pathname)) return <>{children}</>;
+  if (LOGIN_ROUTES.test(pathname)) {
+    if (BACK_ON_LOGIN.test(pathname)) return <><BackButton />{children}</>;
+    return <>{children}</>;
+  }
 
   return <>
     <header className="border-b bg-white">

@@ -10,7 +10,7 @@ export default function BackButton() {
 
   const segments = pathname.split('/').filter(Boolean);
   const isDetailPage =
-    (segments.length === 2 && (segments[0] === 'umum' || segments[0] === 'panitia')) ||
+    (segments.length === 2 && (segments[0] === 'umum' || segments[0] === 'panitia') && segments[1] !== 'login') ||
     (segments.length === 3 && segments[0] === 'pdd' && segments[1] === 'dokumentasi');
 
   if (isDetailPage) return null;
@@ -19,6 +19,8 @@ export default function BackButton() {
     '/umum': '/',
     '/panitia': '/',
     '/pdd/dokumentasi': '/pdd/menu',
+    '/panitia/login': '/',
+    '/pdd/login': '/',
   };
   const target = backTargets[pathname];
 
