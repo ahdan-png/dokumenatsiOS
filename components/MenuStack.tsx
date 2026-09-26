@@ -56,10 +56,10 @@ export default function MenuStack() {
   return (
     <div className="mt-14 flex justify-center">
       <div className="scale-[0.68] sm:scale-90 md:scale-100">
-        <div className="relative" style={{ width: 360, height: 200 }}>
-          <MenuButton label="Umum" href="/umum" glow="rgba(59,130,246,0.7)" rotate={-13} offsetX={-72} offsetY={26} z={1} />
-          <MenuButton label="Panitia" href="/panitia/login" glow="rgba(239,68,68,0.7)" rotate={-3} offsetX={0} offsetY={-14} z={2} />
-          <MenuButton label="PDD" href="/pdd/login" glow="rgba(245,158,11,0.7)" rotate={9} offsetX={72} offsetY={26} z={3} />
+        <div className="relative" style={{ width: 320, height: 180 }}>
+          <MenuButton label="Umum" href="/umum" glow="rgba(59,130,246,0.7)" rotate={-15} offsetX={-45} offsetY={35} z={1} />
+          <MenuButton label="Panitia" href="/panitia/login" glow="rgba(239,68,68,0.7)" rotate={-15} offsetX={0} offsetY={0} z={2} />
+          <MenuButton label="PDD" href="/pdd/login" glow="rgba(245,158,11,0.7)" rotate={-15} offsetX={45} offsetY={-35} z={3} />
         </div>
       </div>
     </div>
