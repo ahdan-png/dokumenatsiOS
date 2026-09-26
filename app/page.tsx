@@ -1,1 +1,25 @@
-import Link from 'next/link';export default function Home(){return <main className="flex-1 bg-gradient-to-br from-sky-900 to-teal-700 px-4 py-16 text-center text-white md:py-24"><p className="font-semibold tracking-[.2em]">SELAMAT DATANG DI</p><h1 className="mt-5 whitespace-nowrap text-[clamp(1.75rem,8vw,3rem)] font-bold">DOKUMENTASI OSIM</h1><div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3"><Link href="/umum" className="rounded-xl bg-white/15 p-5 font-semibold backdrop-blur hover:bg-white/25">Umum</Link><Link href="/panitia/login" className="rounded-xl bg-white/15 p-5 font-semibold backdrop-blur hover:bg-white/25">Panitia</Link><Link href="/pdd/login" className="rounded-xl bg-white/15 p-5 font-semibold backdrop-blur hover:bg-white/25">PDD</Link></div></main>}
+import MenuButton from '@/components/MenuButton';
+
+export default function Home() {
+  return (
+    <main className="relative flex-1 overflow-hidden bg-gradient-to-br from-sky-950 via-sky-900 to-teal-800 px-4 py-16 text-center text-white md:py-24">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/20 blur-3xl" />
+        <div className="absolute -left-24 top-8 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-teal-300/15 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.15] [background-image:radial-gradient(rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:26px_26px]" />
+      </div>
+
+      <div className="relative">
+        <p className="font-semibold tracking-[.2em]">SELAMAT DATANG DI</p>
+        <h1 className="mt-5 whitespace-nowrap text-[clamp(1.75rem,8vw,3rem)] font-bold">DOKUMENTASI OSIM</h1>
+
+        <div className="mx-auto mt-14 flex flex-wrap items-start justify-center gap-10 sm:gap-12">
+          <MenuButton label="Umum" href="/umum" glow="rgba(59,130,246,0.6)" />
+          <MenuButton label="Panitia" href="/panitia/login" glow="rgba(239,68,68,0.6)" />
+          <MenuButton label="PDD" href="/pdd/login" glow="rgba(245,158,11,0.6)" />
+        </div>
+      </div>
+    </main>
+  );
+}
